@@ -81,6 +81,30 @@ app.get('/flix/journey/:fromID/:fromType/:toID/:toType/:when', async function (r
     });
 });
 
+app.get('/flix/journey/:fromID/:fromType/:toID/:toType/:when/:language', async function (req, res, next) {
+    var fromID = {
+        type: req.params.fromType,
+        id: req.params.fromID
+    };
+    var toID = {
+        type: req.params.toType,
+        id: req.params.toID
+    };
+    var when = req.params.when;
+
+    var option = {
+        when: moment(when).toDate(),
+        language: req.params.language
+    };
+
+    var result = await flix.journeys(fromID, toID, option);
+
+    res.status(200).send({
+        success: 'true',
+        message: result
+    });
+});
+
 app.get('/flix/convert/dbtoflix/:ID', async function (req, res, next) {
     var ID = req.params.ID;
 
