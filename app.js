@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/flix/query/:typed', async function (req, res, next) {
     var typed = req.params.typed;
 
-    var result = await search(typed);
+    var result = await search(typed, null, true);
 
     res.status(200).send({
         success: 'true',
@@ -32,7 +32,7 @@ app.get('/flix/query/:typed/:limit', async function (req, res, next) {
     var typed = req.params.typed;
     var limit = req.params.limit;
 
-    var result = await search(typed, limit);
+    var result = await search(typed, limit, true);
 
     res.status(200).send({
         success: 'true',
@@ -108,7 +108,14 @@ app.get('/flix/journey/:fromID/:fromType/:toID/:toType/:when/:language', async f
 app.get('/flix/convert/dbtoflix/:ID', async function (req, res, next) {
     var ID = req.params.ID;
 
-    var result = await adapter.toFlix(ID);
+    var result = await adapter.toFlix(ID).catch((res) => {
+        res.status(200).send({
+            success: 'false',
+            message: "No Station found.",
+            result: res
+        });
+    });
+
 
     res.status(200).send({
         success: 'true',
